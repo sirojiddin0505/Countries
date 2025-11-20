@@ -1,55 +1,105 @@
 import React, { useEffect, useState } from 'react'
+import { IoReloadSharp } from 'react-icons/io5';
 
 const HomePage = () => {
+  const [searchTerm, setSearchTerm] = useState('');
   const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(false)
-  
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const fetchCountries = async () => {
-    setLoading(true)
-    try{
-       fetch('https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags')
-      .then(res => res.json())
-      .then(data => setCountries(data))
-    }catch(error){
-      console.log(error);
-    }finally{
-      setLoading(false)
+    setLoading(true);
+    setError('');
+
+    const endpoints = [
+      'https://restcountries.com/v3.1/all',
+      // 'https://restcountries.com/v3.1/region/asia',
+      'https://restcountries.com/v3.1/name/a',
+      'https://restcountries.com/v3.1/region/europe'
+    ];
+
+    for (let endpoint of endpoints) {
+      try {
+        // console.log('Trying endpoint:', endpoint);
+        const response = await fetch(endpoint);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Success with endpoint:', endpoint, 'Data length:', data.length);
+          setCountries(data);
+          setFilteredCountries(data);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.log('Failed with endpoint:', endpoint, err);
+        continue;
+      }
     }
-  }
+
+    setError('Hech qanday API endpoint ishlamadi');
+    setLoading(false);
+  };
 
   useEffect(() => {
-    fetchCountries()
+    fetchCountries();
   }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredCountries(countries);
+    } else {
+      const filtered = countries.filter(country =>
+        country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredCountries(filtered);
+    }
+  }, [searchTerm, countries]);
 
   return (
     <div className='pt-20 mx-10'>
-        <div className='flex justify-between items-center py-4 '>
-            <input type="search" placeholder='davlat qidiring'
-            className='border border-white/50 p-3 rounded-md focus:outline-none focus:bg-gray-800 bg-gray-900 text-white'/>
-            <select 
-              className='border border-white/50 p-3 rounded-md focus:outline-none focus:bg-gray-800 bg-gray-900 text-white'>                
-                <option value="">Filter</option>
-                <option value="">All</option>
-                <option value="">Language</option>
-            </select>
-        </div>
+      <div className='flex justify-between items-center py-2 px-5 gap-4'>
+        <button onClick={fetchCountries}
+          className='border cursor-pointer border-white/50 p-3 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
+          <IoReloadSharp/>
+        </button>
+        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="search" 
+          placeholder='Davlat qidiring...'
+          className='border max-w-[400px] w-full border-white/50 p-3 rounded-md focus:outline-none focus:bg-gray-800 bg-gray-900 text-white'/>
+        <button className='border cursor-pointer border-white/50 py-3 px-8 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
+          Filter
+        </button>
+      </div>
 
-        <div className='text-white flex flex-wrap gap-8 justify-between mt-8 '>
-          {countries && countries.map((item) => (
-            <div className='w-[300px] overflow-hidden cursor-pointer hover:opacity-95 border border-white/50 bg-gray-900 rounded-lg '>
-              <div className=' cursor-pointer border h-[180px]'>
-                <img src={item.flags.svg} alt={`Bayroq: ${item.name.common}`}
-                  className='w-full h-full hover:scale-105 duration-500 ' />
-              </div>
-              <div className='mx-6 my-4 flex flex-col gap-2  '>
-                <h1 className='text-2xl font-semibold'>{item.name.common}</h1>
-                <p><b>Poytaxti:</b> {item.capital}</p>
-                <p><b>Aholisi:</b> {item.population} kishi</p>
-                <p><b>Mintaqasi:</b> {item.region}</p>
-              </div>
-            </div>
-          ))}
+      {loading && <div className="loader"></div>}
+      {error && <div className="text-red-500 text-center text-xl">{error}</div>}
+
+      {!loading && !error && (
+        <div className="text-white px-5">
+          Jami: {filteredCountries.length} ta mamlakat topildi
         </div>
+      )}
+
+      <div className='text-white flex flex-wrap gap-8 justify-around mt-6'>
+        {filteredCountries.map((item) => (
+          <div key={item.cca3} className='w-[330px] overflow-hidden cursor-pointer hover:opacity-95 border border-white/50 bg-gray-900 rounded-lg'>
+            <div className='cursor-pointer h-[170px] overflow-hidden'>
+              <img 
+                src={item.flags?.svg} 
+                alt={`${item.name?.common} bayrog'i`}
+                className='w-full h-full hover:scale-110 duration-500 object-cover'
+              />
+            </div>
+            <div className='mx-6 my-4 flex flex-col gap-2'>
+              <h1 className='text-2xl font-semibold'>{item.name?.common}</h1>
+              <p><b>Poytaxti:</b> {item.capital?.[0] || 'Mavjud emas'}</p>
+              <p><b>Aholisi:</b> {item.population?.toLocaleString()} kishi</p>
+              <p><b>Mintaqasi:</b> {item.region}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

@@ -8,7 +8,7 @@ const Layout = () => {
     <div>
       <Header/>
         <main className='bg-gray-800 w-full min-h-screen'>
-            <Outlet/>
+          <Outlet/>
         </main>
       <Footer />
     </div>
