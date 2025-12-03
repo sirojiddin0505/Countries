@@ -43,6 +43,10 @@ const Header = () => {
             <NavLink to={'/'}>Home</NavLink>
             <NavLink to={'/about'}>About</NavLink>
             <NavLink to={'/hero'}>Contact</NavLink>
+            <button 
+              className='flex border w-[160px] cursor-pointer border-white/50 p-2 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
+              Qayta yuklash
+            </button>
             <button className='flex items-center w-[170px] gap-1 py-2 px-4 rounded-lg shadow-sm cursor-pointer text-black bg-white '>Light Mode <GoSun/></button>
           </div>
         </div>

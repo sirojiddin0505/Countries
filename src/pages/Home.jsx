@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { IoReloadSharp } from 'react-icons/io5';
+import { NavLink } from 'react-router-dom';
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,12 +22,9 @@ const HomePage = () => {
 
     for (let endpoint of endpoints) {
       try {
-        // console.log('Trying endpoint:', endpoint);
-        const response = await fetch(endpoint);
-        
+        const response = await fetch(endpoint);        
         if (response.ok) {
           const data = await response.json();
-          console.log('Success with endpoint:', endpoint, 'Data length:', data.length);
           setCountries(data);
           setFilteredCountries(data);
           setLoading(false);
@@ -59,15 +57,16 @@ const HomePage = () => {
 
   return (
     <div className='pt-20 mx-10'>
-      <div className='flex justify-between items-center py-2 px-5 gap-4'>
+      <div className='flex justify-center md:justify-between items-center py-2 px-5 gap-4'>
         <button onClick={fetchCountries}
-          className='border cursor-pointer border-white/50 p-3 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
+          className='hidden md:flex border cursor-pointer border-white/50 p-3 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
           <IoReloadSharp/>
         </button>
         <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="search" 
           placeholder='Davlat qidiring...'
           className='border max-w-[400px] w-full border-white/50 p-3 rounded-md focus:outline-none focus:bg-gray-800 bg-gray-900 text-white'/>
-        <button className='border cursor-pointer border-white/50 py-3 px-8 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
+        <button 
+          className='hidden md:flex border cursor-pointer border-white/50 py-3 px-8 rounded-md hover:bg-gray-800 bg-gray-900 text-white'>
           Filter
         </button>
       </div>
@@ -76,7 +75,7 @@ const HomePage = () => {
       {error && <div className="text-red-500 text-center text-xl">{error}</div>}
 
       {!loading && !error && (
-        <div className="text-white px-5">
+        <div className="text-white pt-2 text-center">
           Jami: {filteredCountries.length} ta mamlakat topildi
         </div>
       )}
@@ -84,19 +83,18 @@ const HomePage = () => {
       <div className='text-white flex flex-wrap gap-8 justify-around mt-6'>
         {filteredCountries.map((item) => (
           <div key={item.cca3} className='w-[330px] overflow-hidden cursor-pointer hover:opacity-95 border border-white/50 bg-gray-900 rounded-lg'>
-            <div className='cursor-pointer h-[170px] overflow-hidden'>
-              <img 
-                src={item.flags?.svg} 
-                alt={`${item.name?.common} bayrog'i`}
-                className='w-full h-full hover:scale-110 duration-500 object-cover'
-              />
-            </div>
-            <div className='mx-6 my-4 flex flex-col gap-2'>
-              <h1 className='text-2xl font-semibold'>{item.name?.common}</h1>
-              <p><b>Poytaxti:</b> {item.capital?.[0] || 'Mavjud emas'}</p>
-              <p><b>Aholisi:</b> {item.population?.toLocaleString()} kishi</p>
-              <p><b>Mintaqasi:</b> {item.region}</p>
-            </div>
+            <NavLink to={`/country/${item.name.common}`}>
+              <div className='cursor-pointer h-[170px] overflow-hidden'>
+                <img src={item.flags?.svg} alt={`${item.name?.common} bayrog'i`}
+                  className='w-full h-full hover:scale-110 duration-500 object-cover'/>
+              </div>
+              <div className='mx-6 my-4 flex flex-col gap-2'>
+                <h1 className='text-2xl font-semibold'>{item.name?.common}</h1>
+                <p><b>Poytaxti:</b> {item.capital?.[0] || 'Mavjud emas'}</p>
+                <p><b>Aholisi:</b> {item.population?.toLocaleString()} kishi</p>
+                <p><b>Mintaqasi:</b> {item.region}</p>
+              </div>
+            </NavLink>
           </div>
         ))}
       </div>
