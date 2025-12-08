@@ -10,7 +10,7 @@ const CountryDetails = () => {
 
     const fetchCountry = async() => {
         try{
-            const res = await fetch(`https://restcountries.com/v3.1/name/${name}?fullText=true&fields=name,capital,region,population,flags,languages,currencies,area,maps`);
+            const res = await fetch(`https://restcountries.com/v3.1/name/${name}?fullText=true&fields=name,capital,region,border,population,flags,languages,currencies,area,maps`);
             const data = await res.json()
             setCountry(data[0])
             console.log(data[0]);
@@ -38,16 +38,16 @@ const CountryDetails = () => {
     }
     
   return (
-    <section className='pt-18'>
-        <div onClick={handleBack} className='text-white text-7xl ml-6'>
+    <section className='flex justify-center flex-col items-center md:fle  gap-4 pt-18'>
+        <div onClick={handleBack} className='text-white text-start text-7xl ml-6 cursor-pointer'>
             <IoIosArrowRoundBack />
         </div>
-        
-        <div className="text-white p-5 border border-white/60 rounded-md max-w-[1200px] mx-10 flex gap-4">
-            <div className='border border-white/20 p-2 rounded-md'>
-                <img className="w-70 h-40 rounded-md"
-                  src={country.flags.svg} alt={country.flags.alt} />
-                <h1 className='text-3xl border border-white/30 p-1 my-3 rounded-md font-[600] pb-2'>{country.name.common}</h1>
+
+        <div className="md:flex gap-4 text-white p-5 border border-white/50 rounded-md max-w-[1300px] mx-10">
+            <div className='border border-white/20 p-2 rounded-md mb-6 overflow-hidden'>
+                <img className="w-70 h-40 rounded-lg overflow-hidden"
+                  src={country.flags.svg} loading="lazy" alt={country.flags.alt} />
+                <h1 className='text-2xl md:text-[26px] border border-white/30 p-1 my-3 rounded-md font-[600] pb-2'>{country.name.common}</h1>
                 <p className='border border-white/30 p-1 rounded-md'><b>Poytaxti:</b> {country.capital}</p>
             </div>
             <div className='border border-white/40 rounded-lg p-3 flex gap-[6px] flex-col'>
@@ -61,12 +61,15 @@ const CountryDetails = () => {
                   href={country.maps.googleMaps}  rel="noreferrer">
                    Xaritada ko‘rish
                 </a>
+                {/* <p className='border border-white/30 p-1 rounded-md'><b>Chegaradoshlari:</b>{country.border}</p> */}
             </div>
-            <div className='border border-white/60 p-3 rounded-lg'>
+            <div className='border border-white/60 p-3 rounded-lg hidden lg:flex'>
               <iframe
                 src={country.maps.googleMaps}
                 width="100%"
                 height="260"
+                target="_blank"
+                rel="noreferrer"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"

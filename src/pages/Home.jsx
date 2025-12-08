@@ -28,6 +28,8 @@ const HomePage = () => {
           setCountries(data);
           setFilteredCountries(data);
           setLoading(false);
+          console.log(data);
+          
           return;
         }
       } catch (err) {
@@ -85,7 +87,7 @@ const HomePage = () => {
           <div key={item.cca3} className='w-[330px] overflow-hidden cursor-pointer hover:opacity-95 border border-white/50 bg-gray-900 rounded-lg'>
             <NavLink to={`/country/${item.name.common}`}>
               <div className='cursor-pointer h-[170px] overflow-hidden'>
-                <img src={item.flags?.svg} alt={`${item.name?.common} bayrog'i`}
+                <img src={item.flags?.png} loading="lazy" alt={`${item.name?.common} bayrog'i`}
                   className='w-full h-full hover:scale-110 duration-500 object-cover'/>
               </div>
               <div className='mx-6 my-4 flex flex-col gap-2'>
@@ -93,6 +95,7 @@ const HomePage = () => {
                 <p><b>Poytaxti:</b> {item.capital?.[0] || 'Mavjud emas'}</p>
                 <p><b>Aholisi:</b> {item.population?.toLocaleString()} kishi</p>
                 <p><b>Mintaqasi:</b> {item.region}</p>
+                {/* <p><b>Chegarasi:</b>{item.borders?.toLocaleString()}</p> */}
               </div>
             </NavLink>
           </div>
